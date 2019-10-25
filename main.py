@@ -25,10 +25,18 @@ class MainWindow(QMainWindow,FORM_CLASS):
      
  def get_text(self):
      text=self.plainTextEdit.toPlainText()
-     text=text.split()
-     self.close()
-     self.new_window=OutputWindow(text)
-     self.new_window.show()
+     if(text==''):
+         self.msgBox=QMessageBox()
+         self.msgBox.setWindowTitle("Error!")
+         self.msgBox.setIcon(QMessageBox.Warning)
+         self.msgBox.setText("You must enter a code")
+         self.msgBox.setStandardButtons(QMessageBox.Ok)
+         self.msgBox.exec_()
+     else:
+         text=text.split()
+         self.close()
+         self.new_window=OutputWindow(text)
+         self.new_window.show()
          
              
          
