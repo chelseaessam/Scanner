@@ -14,25 +14,12 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>45</x>
       <y>20</y>
-      <width>75</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Back</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="mylist">
-    <property name="geometry">
-     <rect>
-      <x>35</x>
-      <y>21</y>
-      <width>291</width>
+      <width>371</width>
       <height>501</height>
      </rect>
     </property>

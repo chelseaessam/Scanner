@@ -17,10 +17,19 @@ class OutputWindow(QMainWindow,FORM_CLASS):
         QMainWindow.__init__(self)
         self.text=text
         self.setupUi(self)
+        self.table_setup()
         self.scanner(text)
-        self.buttons()
- def buttons(self):
-     self.pushButton.clicked.connect(self.goback)
+ def table_setup(self):
+     self.tableWidget.setColumnCount(2)
+     columnsLabels = ['Token Type', 'Token Value']
+     self.tableWidget.setHorizontalHeaderLabels(columnsLabels)
+
+ def add_item(self,token_type,token_value):
+     num_rows=self.tableWidget.rowCount()
+     self.tableWidget.insertRow(num_rows)
+     self.tableWidget.setItem(num_rows, 0, QTableWidgetItem(token_type))
+     self.tableWidget.setItem(num_rows, 1, QTableWidgetItem(token_value))
+
      
  def show_msgBox(self,msg):
         self.msgBox=QMessageBox()
@@ -30,29 +39,29 @@ class OutputWindow(QMainWindow,FORM_CLASS):
         self.msgBox.setStandardButtons(QMessageBox.Ok)
         self.msgBox.exec_()
         
- def goback(self):
-     self.close()
-     self.main_window=MainWindow()
-     self.main_window.show()
+ 
  def scanner(self,text):
       Is_bracket=False
       for word in text:
          Is_number=False
          Is_identifier=False
          
-
+#####handling comments##################
          if (Is_bracket==True) and( word!= "}" or word[len(word)-1]!="}"):
              continue
-         elif Is_bracket==True and word=="}":
+         if Is_bracket==True and (word=="}" or word[len(word)-1]=="}"):
             Is_bracket=False
             continue
+         if word[0]=="{" and word[len(word)-1]=="}":
+             continue 
+#####reserved words################
          
          elif word in reserved:
-                 self.mylist.addItem(word+",reserved")
-                 
+                 self.add_item("reserved",word)
+######special symbols########################                 
                  
          elif word in symbols:
-                 self.mylist.addItem(word+",special symbols")
+                 self.add_item("special symbols",word)
                  
                  
          elif word[0].isdigit():
@@ -63,7 +72,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                      Is_number=False
                      break
              if Is_number==True:
-              self.mylist.addItem(word+",number")
+              self.add_item("number",word)
              else:
                 self.show_msgBox("Syntax Error found "+word)
                 break
@@ -77,7 +86,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                      Is_identifier=False
                      break
              if Is_identifier==True:
-                 self.mylist.addItem(word+" , identifier")
+                 self.add_item("identifier",word)
              else:
                 self.show_msgBox("Syntax Error found in "+word)
                 break

@@ -22,19 +22,23 @@ class MainWindow(QMainWindow,FORM_CLASS):
         self.buttons()
  def buttons(self):
      self.pushbutton_2.clicked.connect(self.get_text)
+ def show_msgBox(self,msg):
+    self.msgBox=QMessageBox()
+    self.msgBox.setWindowTitle("Error!")
+    self.msgBox.setIcon(QMessageBox.Warning)
+    self.msgBox.setText(msg)
+    self.msgBox.setStandardButtons(QMessageBox.Ok)
+    self.msgBox.exec_()
+     
      
  def get_text(self):
      text=self.plainTextEdit.toPlainText()
      if(text==''):
-         self.msgBox=QMessageBox()
-         self.msgBox.setWindowTitle("Error!")
-         self.msgBox.setIcon(QMessageBox.Warning)
-         self.msgBox.setText("You must enter a code")
-         self.msgBox.setStandardButtons(QMessageBox.Ok)
-         self.msgBox.exec_()
+         self.show_msgBox("You must enter a code")
+         
      else:
          text=text.split()
-         self.close()
+         #self.close()
          self.new_window=OutputWindow(text)
          self.new_window.show()
          
