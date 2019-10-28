@@ -58,7 +58,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
 #####reserved words################
          
          elif word in reserved:
-                 self.add_item("reserved",word)
+                 self.add_item("reserved "+ word.upper(),word)
 ######special symbols########################                 
                  
          elif word in symbols:
