@@ -39,13 +39,15 @@ class OutputWindow(QMainWindow,FORM_CLASS):
         self.msgBox.setStandardButtons(QMessageBox.Ok)
         self.msgBox.exec_()
         
- 
  def scanner(self,text):
       Is_bracket=False
       count=0
       for word in text:
           
           if len(word)==1:# it will be either symbol or digit
+              if word=="{":
+                  Is_bracket=True
+                  
               if Is_bracket==True and word!="}":
                   continue
               elif Is_bracket==True and word=="}":
@@ -56,8 +58,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                   self.add_item("number",word)
               elif word.isalpha():
                   self.add_item("identifier",word)
-              elif word=="{":
-                  Is_bracket=True
+              
           elif word==":=":
               self.add_item("special symbol",word)
                   
@@ -72,10 +73,18 @@ class OutputWindow(QMainWindow,FORM_CLASS):
               else:
                   mylist=[]
                   count=0
-                  for element in symbols:
+                  new_symbols={ "+" , "-" , "*" , "/" , "=" , "<" , ">" , "(" , ")" , ";" , ":=","{","}"}
+
+
+                  for element in new_symbols:
                       while element in word:
-                          mylist.append(word[:word.find(element)])
-                          mylist.append(element)
+                          if(word[0]==element):
+                            mylist.append(element)
+                          else:
+                              
+                           mylist.append(word[:word.find(element)])
+                           mylist.append(element)
+
                           
                           if len(word[:word.find(element)])+len(element)!=len(word):
                            word=word[word.find(element)+len(element):]
@@ -96,9 +105,9 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                       if word=="{":
                           Is_bracket=True
 
-                      if word!="}" and Is_bracket==True:
+                      if Is_bracket==True and word!="}" :
                           continue
-                      elif word=="}" and Is_bracket==True:
+                      elif Is_bracket==True and word=="}":
                           Is_bracket=False
                       
                       elif word in symbols:
