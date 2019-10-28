@@ -22,6 +22,9 @@ class MainWindow(QMainWindow,FORM_CLASS):
         self.buttons()
  def buttons(self):
      self.pushbutton_2.clicked.connect(self.get_text)
+     self.pushButton.clicked.connect(self.clear_text)
+ def clear_text(self):
+     self.plainTextEdit.clear()
  def show_msgBox(self,msg):
     self.msgBox=QMessageBox()
     self.msgBox.setWindowTitle("Error!")
