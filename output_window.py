@@ -86,10 +86,16 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                      Is_identifier=True
                      
                  elif letter=="[":
-                     Is_operator=True
-                     Is_identifier=False
-                     self.add_item("operator",word[0:(word.find("["))])
-                     self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
+                     if word.find("]")!=-1:
+                         Is_operator=True
+                         Is_identifier=False
+                         self.add_item("operator",word[0:(word.find("["))])
+                         self.add_item("special symbols","[")
+                         self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
+                         self.add_item("special symbols","]")
+                     else:
+                        Is_identifier=False
+                        break
                  else:
                     Is_identifier=False
                     break
