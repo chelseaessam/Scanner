@@ -82,12 +82,13 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                             mylist.append(element)
                           else:
                               
-                           mylist.append(word[:word.find(element)])
+                           #mylist.append(word[:word.find(element)])
+                           mylist.append(word[slice(0,word.find(element),1)])
                            mylist.append(element)
 
                           
                           if len(word[:word.find(element)])+len(element)!=len(word):
-                           word=word[word.find(element)+len(element):]
+                           word=word[slice(word.find(element)+len(element),len(word),1)]
                           else:
                               word=''
 
