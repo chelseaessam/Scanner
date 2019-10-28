@@ -45,6 +45,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
       for word in text:
          Is_number=False
          Is_identifier=False
+         Is_operator=False
          
 #####handling comments##################
          if (Is_bracket==True) and( word!= "}" or word[len(word)-1]!="}"):
@@ -74,20 +75,29 @@ class OutputWindow(QMainWindow,FORM_CLASS):
              if Is_number==True:
               self.add_item("number",word)
              else:
-                self.show_msgBox("Syntax Error found "+word)
+                self.show_msgBox("Syntax Error found in "+word)
                 break
 
               
          elif word[0].isalpha():
+             
              for letter in word:
                  if letter.isalpha():
                      Is_identifier=True
-                 else:
+                     
+                 elif letter=="[":
+                     Is_operator=True
                      Is_identifier=False
-                     break
-             if Is_identifier==True:
+                     self.add_item("operator",word[0:(word.find("["))])
+                     self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
+                 else:
+                    Is_identifier=False
+                    break
+                
+                
+             if Is_identifier==True and Is_operator==False:
                  self.add_item("identifier",word)
-             else:
+             elif Is_identifier== False and Is_operator==False:
                 self.show_msgBox("Syntax Error found in "+word)
                 break
             
