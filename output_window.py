@@ -42,80 +42,159 @@ class OutputWindow(QMainWindow,FORM_CLASS):
  
  def scanner(self,text):
       Is_bracket=False
+      count=0
       for word in text:
-         Is_number=False
-         Is_identifier=False
-         Is_operator=False
-         semi_colon=False
-         if word.find(";")!=-1:
-             semi_colon=True
-             word=word[0:word.find(";")]
-         
-#####handling comments##################
-         if (Is_bracket==True) and( word!= "}" or word[len(word)-1]!="}"):
-             continue
-         if Is_bracket==True and (word=="}" or word[len(word)-1]=="}"):
-            Is_bracket=False
-            continue
-         if word[0]=="{" and word[len(word)-1]=="}":
-             continue 
-#####reserved words################
-         
-         elif word in reserved:
-                 self.add_item("reserved "+ word.upper(),word)
-######special symbols########################                 
-                 
-         elif word in symbols:
-                 self.add_item("special symbols",word)
-                 
-                 
-         elif word[0].isdigit():
-             for letter in word:
-                 if letter.isdigit():
-                     Is_number=True
-                 else:
-                     Is_number=False
-                     break
-             if Is_number==True:
-              self.add_item("number",word)
-             else:
-                self.show_msgBox("Syntax Error found in "+word)
-                break
+          
+          if len(word)==1:# it will be either symbol or digit
+              if Is_bracket==True and word!="}":
+                  continue
+              elif Is_bracket==True and word=="}":
+                  Is_bracket=False
+              elif word in symbols:
+                  self.add_item("special symbol",word)
+              elif word.isdigit():
+                  self.add_item("number",word)
+              elif word.isalpha():
+                  self.add_item("identifier",word)
+              elif word=="{":
+                  Is_bracket=True
+          elif word==":=":
+              self.add_item("special symbol",word)
+                  
 
+
+
+                  
+          else:# if word more than one
               
-         elif word[0].isalpha():
-                 
-             for letter in word:
-                 if letter.isalpha():
-                     Is_identifier=True
-                     
-                 elif letter=="[":
-                     if word.find("]")!=-1:
-                         Is_operator=True
-                         Is_identifier=False
-                         self.add_item("operator",word[0:(word.find("["))])
-                         self.add_item("special symbols","[")
-                         self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
-                         self.add_item("special symbols","]")
-                     else:
-                        Is_identifier=False
-                        break
-                 else:
-                    Is_identifier=False
-                    break
-                
-                
-             if Is_identifier==True and Is_operator==False:
-                 self.add_item("identifier",word)
-             elif Is_identifier== False and Is_operator==False:
-                self.show_msgBox("Syntax Error found in "+word)
-                break
-            
-         elif word =="{" or word[0]=="{":
-                Is_bracket=True
-         if semi_colon==True:
-             self.add_item("special symbols",";")
-             semi_colon=False
-                
+              if word in reserved:
+                  self.add_item("reserved "+word.upper(),word)
+              else:
+                  mylist=[]
+                  count=0
+                  for element in symbols:
+                      while element in word:
+                          mylist.append(word[:word.find(element)])
+                          mylist.append(element)
+                          
+                          if len(word[:word.find(element)])+len(element)!=len(word):
+                           word=word[word.find(element)+len(element):]
+                          else:
+                              word=''
+
+                  if word!='' :
+                          mylist.append(word)
+                          
+                          
+                  
+                  for word in mylist:
+                      
+                      Is_number=False
+                      Is_identifier=False
+                      Is_operator=False
+
+                      if word=="{":
+                          Is_bracket=True
+
+                      if word!="}" and Is_bracket==True:
+                          continue
+                      elif word=="}" and Is_bracket==True:
+                          Is_bracket=False
+                      
+                      elif word in symbols:
+                         self.add_item("special symbols",word)
+                         
+                      elif word[0].isdigit():
+                                 for letter in word:
+                                     if letter.isdigit():
+                                         Is_number=True
+                                     else:
+                                         Is_number=False
+                                         break
+                                 if Is_number==True:
+                                  self.add_item("number",word)
+                                 else:
+                                    self.show_msgBox("Syntax Error found in "+word)
+                                    break
+                              
+                    
+                          
+                      elif word[0].isalpha():
+##                 
+                             for letter in word:
+                                 if letter.isalpha():
+                                     Is_identifier=True
+                                     
+                                 elif letter=="[":
+                                     if word.find("]")!=-1:
+                                         Is_operator=True
+                                         Is_identifier=False
+                                         self.add_item("operator",word[0:(word.find("["))])
+                                         self.add_item("special symbols","[")
+                                         self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
+                                         self.add_item("special symbols","]")
+                                     else:
+                                        Is_identifier=False
+                                        break
+                                    
+                                
+                                         
+                             if Is_identifier==True and Is_operator==False:
+                                 self.add_item("identifier",word)
+                             elif Is_identifier== False and Is_operator==False:
+                                self.show_msgBox("Syntax Error found in "+word)
+                                break    
+                                      
+                            
+                              
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
+##         Is_number=False
+##         Is_identifier=False
+##         Is_operator=False
+##         
+#######handling comments##################
+##         if (Is_bracket==True) and( word!= "}" or word[len(word)-1]!="}"):
+##             continue
+##         if Is_bracket==True and (word=="}" or word[len(word)-1]=="}"):
+##            Is_bracket=False
+##            continue
+##         if word[0]=="{" and word[len(word)-1]=="}":
+##             continue 
+
+##         
 
              
