@@ -46,6 +46,10 @@ class OutputWindow(QMainWindow,FORM_CLASS):
          Is_number=False
          Is_identifier=False
          Is_operator=False
+         semi_colon=False
+         if word.find(";")!=-1:
+             semi_colon=True
+             word=word[0:word.find(";")]
          
 #####handling comments##################
          if (Is_bracket==True) and( word!= "}" or word[len(word)-1]!="}"):
@@ -80,7 +84,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
 
               
          elif word[0].isalpha():
-             
+                 
              for letter in word:
                  if letter.isalpha():
                      Is_identifier=True
@@ -109,6 +113,9 @@ class OutputWindow(QMainWindow,FORM_CLASS):
             
          elif word =="{" or word[0]=="{":
                 Is_bracket=True
+         if semi_colon==True:
+             self.add_item("special symbols",";")
+             semi_colon=False
                 
 
              
