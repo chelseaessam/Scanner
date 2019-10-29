@@ -41,11 +41,19 @@ class OutputWindow(QMainWindow,FORM_CLASS):
         
  def scanner(self,text):
       Is_bracket=False
-      count=0
+      to_break=False
+      index=-1
       for word in text:
-          
+          index=index+1
+          if Is_bracket==True and "}" not in word and index==len(text)-1:
+                  self.show_msgBox("Unbalanced curly brackets")
+                  break
           if len(word)==1:# it will be either symbol or digit
-              if word=="{":
+              
+              if word=="{" and index==len(text)-1:
+                  self.show_msgBox("Unbalanced curly brackets")
+                  break
+              elif word=="{":
                   Is_bracket=True
                   
               if Is_bracket==True and word!="}":
@@ -68,45 +76,61 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                   
           else:# if word more than one
               
-              if word in reserved:
+              if word in reserved and Is_bracket!=True:
                   self.add_item("reserved "+word.upper(),word)
               else:
                   mylist=[]
+                  new_symbols={ "+" , "-" , "*" , "/" , "=" , "<" , ">" , "(" , ")" , ";" ,"{","}"}
                   count=0
-                  new_symbols={ "+" , "-" , "*" , "/" , "=" , "<" , ">" , "(" , ")" , ";" , ":=","{","}"}
 
 
-                  for element in new_symbols:
-                      while element in word:
-                          if(word[0]==element):
-                            mylist.append(element)
-                          else:
-                              
-                           #mylist.append(word[:word.find(element)])
-                           mylist.append(word[slice(0,word.find(element),1)])
-                           mylist.append(element)
+                  for letter in word:
+                      if letter in new_symbols:
+                          
+                           if letter=="=" and count-1>0 and mylist[count-1]==":=":
+                              continue
+                           else:
+
+                               if(word[0]==letter):
+                                   mylist.append(letter)
+                                   word=word[slice(word.find(letter)+1,len(word),1)]
+                                   count=count+1
+                               else:
+                                   
+                                   mylist.append(word[slice(0,word.find(letter),1)])
+                                   mylist.append(letter)
+                                   count=count+2
 
                           
-                          if len(word[:word.find(element)])+len(element)!=len(word):
-                           word=word[slice(word.find(element)+len(element),len(word),1)]
-                          else:
-                              word=''
+                                   if len(word[:word.find(letter)])+len(letter)!=len(word):
+                                    word=word[slice(word.find(letter)+len(letter),len(word),1)]
+                                   else:
+                                      word=''
+                      elif letter==":" and word.find(letter)!=len(word)-1 and word[word.find(letter)+1]=="=":
+                          mylist.append(word[slice(0,word.find(letter),1)])
+                          mylist.append(":=")
+                          word=word[slice(word.find(letter)+2,len(word),1)]
+                          count=count+2
+                      
+                          
+                          
 
                   if word!='' :
                           mylist.append(word)
                           
-                          
-                  
+                  count=0
                   for word in mylist:
-                      
                       Is_number=False
                       Is_identifier=False
                       Is_operator=False
 
-                      if word=="{":
+                      if Is_bracket==True and word!="}" and index==len(text)-1 and count==len(mylist)-1:
+                       self.show_msgBox("Unbalanced curly brackets")
+                       break
+                      elif word=="{":
                           Is_bracket=True
 
-                      if Is_bracket==True and word!="}" :
+                      elif Is_bracket==True and word!="}" :
                           continue
                       elif Is_bracket==True and word=="}":
                           Is_bracket=False
@@ -125,6 +149,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                                   self.add_item("number",word)
                                  else:
                                     self.show_msgBox("Syntax Error found in "+word)
+                                    to_break=True
                                     break
                               
                     
@@ -143,7 +168,7 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                                          self.add_item("special symbols","[")
                                          self.add_item("identifier",word[(word.find("[")+1): word.find("]")])
                                          self.add_item("special symbols","]")
-                                     else:
+                                 else:
                                         Is_identifier=False
                                         break
                                     
@@ -153,10 +178,13 @@ class OutputWindow(QMainWindow,FORM_CLASS):
                                  self.add_item("identifier",word)
                              elif Is_identifier== False and Is_operator==False:
                                 self.show_msgBox("Syntax Error found in "+word)
+                                to_break=True
                                 break    
-                                      
                             
-                              
+                      count=count+1
+                  if to_break==True:
+                        break
+                
 
 
 
