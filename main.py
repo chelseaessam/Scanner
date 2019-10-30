@@ -10,7 +10,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import *
 from PyQt5.uic import loadUiType
 
-FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "main_window.ui"))
+FORM_CLASS, _ = loadUiType(path.join(path.dirname(__file__), "C:\\Users\\Dell\\Desktop\\scanner2\\main_window.ui"))
 reserved={"if","then","else","end","repeat","until","read","write"}
 symbols = { "+" , "-" , "*" , "/" , "=" , "<" , ">" , "(" , ")" , ";" , ":="}
 class MainWindow(QMainWindow,FORM_CLASS):
@@ -45,8 +45,8 @@ class MainWindow(QMainWindow,FORM_CLASS):
      
      
  def get_text(self):
-     text=self.plainTextEdit.toPlainText()
-     if(text==''):
+     text1=self.plainTextEdit.toPlainText()
+     if not text1:
          self.show_msgBox("You must enter a code")
          
      else:
@@ -54,38 +54,47 @@ class MainWindow(QMainWindow,FORM_CLASS):
       
                self.tableWidget.removeRow(0)
        
-         text=text.split()
-         self.scanner(text)
+         #text=text.split()
+         self.scanner(text1)
          
              
          
- def scanner(self,text):
-      bracketNo=0
-      rightBracket=0
+ def scanner(self,text1):
+      text=text1.split()
+      bracket_list=[]
+      bcount=-1
       
       to_break=False
       index=-1
       for word in text:
           index=index+1
-          if bracketNo>0 and rightBracket==0 and "}" not in word and index==len(text)-1:
+          if bcount!=-1 and word!="}" and index==len(text)-1:
                   self.show_msgBox("Unbalanced curly brackets")
                   break
           if len(word)==1:# it will be either symbol or digit
               
-              if word=="{" and index==len(text)-1:
+              if bcount!=-1 and word!="}" and index==len(text)-1:
                   self.show_msgBox("Unbalanced curly brackets")
                   break
               elif word=="{":
-                  bracketNo=bracketNo+1
+                  bracket_list.append("{")
+                  bcount=bcount+1
                   
-              if bracketNo>0 and word!="}":
+              
+              elif word=="}":
+                  if bcount!=-1:#there was left bracket found
+                      index=text1.find("}")
+                      
+                      if index+1< len(text1) and text1.find("}",index+1,len(text1))!=-1: # there is another right bracket
+                         bracket_list.pop()
+                         bcount=bcount-1
+                      else:
+                         bcount=-1 #empty the list
+                  else:
+                      self.show_msgBox("Syntax Error found in }")
+                      break
+              if bcount!=-1  :#and (text1.find("}")!=-1 )
                   continue
-              elif bracketNo>0 and word=="}":
-                  bracketNo=bracketNo-1
-                  rightBracket=rightBracket+1
-              elif rightBracket>0 and bracketNo==0:
-                  self.show_msgBox("Syntax Error found in }")
-                  break
               elif word in symbols:
                   self.add_item("special symbol",word)
               elif word.isdigit():
@@ -93,7 +102,7 @@ class MainWindow(QMainWindow,FORM_CLASS):
               elif word.isalpha():
                   self.add_item("identifier",word)
               
-          elif word==":=":
+          elif word==":=" and bcount==-1:
               self.add_item("special symbol",word)
                   
 
@@ -102,7 +111,7 @@ class MainWindow(QMainWindow,FORM_CLASS):
                   
           else:# if word more than one
               
-              if word in reserved and bracketNo==0:
+              if word in reserved and bcount==-1:
                   self.add_item("reserved "+word.upper(),word)
               else:
                   mylist=[]
@@ -151,21 +160,29 @@ class MainWindow(QMainWindow,FORM_CLASS):
                       Is_identifier=False
                       Is_operator=False
 
-                      if bracketNo>0 and rightBracket==0 and word!="}" and index==len(text)-1 and count==len(mylist)-1:
+                      if bcount!=-1 and word!="}" and index==len(text)-1 and count==len(mylist)-1:
                        self.show_msgBox("Unbalanced curly brackets")
                        break
                       elif word=="{":
-                          bracketNo=bracketNo+1
+                          bracket_list.append("{")
+                          bcount=bcount+1
 
-                      elif bracketNo>0 and word!="}" :
+                      
+                        
+                      elif word=="}":
+                           if bcount!=-1:#there was left bracket found
+                              index=text1.find("}")
+                              if index+1<len(text1) and text1.find("}",index+1,len(text1))!=-1: # there is another right bracket
+                                     bracket_list.pop()
+                                     bcount=bcount-1
+                              else:
+                                bcount=-1 #empty the list
+                           else:
+                               self.show_msgBox("Syntax Error found in }")
+                               to_break=True
+                               break
+                      elif bcount!=-1:#and (text1.find("}")!=-1 )
                           continue
-                      elif bracketNo>0 and word=="}":
-                          bracketNo=bracketNo-1
-                          rightBracket=rightBracket+1
-                      elif rightBracket>0 and bracketNo==0:
-                          self.show_msgBox("Syntax Error found in }")
-                          to_break=True
-                          break
                       elif word in symbols:
                          self.add_item("special symbols",word)
                          
@@ -215,7 +232,9 @@ class MainWindow(QMainWindow,FORM_CLASS):
                   if to_break==True:
                         break
                 
-        
+      if self.tableWidget.rowCount()==0:
+          self.show_msgBox("There is no output")
+          
     
      
 def main():
