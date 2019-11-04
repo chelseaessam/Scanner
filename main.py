@@ -32,6 +32,14 @@ class MainWindow(QMainWindow,FORM_CLASS):
     self.msgBox.setText(msg)
     self.msgBox.setStandardButtons(QMessageBox.Ok)
     self.msgBox.exec_()
+ def show_alertBox(self,msg):
+    self.msgBox=QMessageBox()
+    self.msgBox.setWindowTitle("Alert!")
+    self.msgBox.setIcon(QMessageBox.Warning)
+    self.msgBox.setText(msg)
+    self.msgBox.setStandardButtons(QMessageBox.Ok)
+    self.msgBox.exec_()
+     
  def table_setup(self):
      self.tableWidget.setColumnCount(2)
      columnsLabels = ['Token Type', 'Token Value']
@@ -233,7 +241,7 @@ class MainWindow(QMainWindow,FORM_CLASS):
                         break
                 
       if self.tableWidget.rowCount()==0:
-          self.show_msgBox("There is no output")
+          self.show_alertBox("There is no output")
           
     
      
